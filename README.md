@@ -11,15 +11,11 @@ This repository contains the PyTorch implementation of the paper "Learning a Gen
 We want everyone to have a chance to try our models out, even in this economy. All of our released GLPs were trained on a billion [FineWeb](https://huggingface.co/datasets/HuggingFaceFW/fineweb) activations using two Nvidia A100 80GB GPUs (one for activation caching and the other for training), but with some ingenuity you can probably make it work on smaller GPUs too.
 
 ## Setup
-This code was tested with Python 3.11. To set up the environment, please run:
+This code requires Python 3.11. Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run:
 ```
-conda env create -f environment.yaml
-conda activate glp
-pip install vllm==0.9.2 
-pip install transformers==4.47.0
-pip install -e .
+uv sync
 ```
-You'll need to do the installation in the exact order above, and ignore any pip warnings. We used this exact setup, which was the only way we could get vllm/nnsight/transformers to work together.
+This installs all dependencies (including torch, vllm, nnsight, and transformers) into a local `.venv`. The `transformers==4.47.0` pin is enforced via a uv override to maintain compatibility with vllm and nnsight.
 
 ## Pre-Trained Weights
 You can view all the weights on [our HuggingFace page](https://huggingface.co/generative-latent-prior).
@@ -64,13 +60,12 @@ In the demo, we'll walk through loading a GLP, generating activations, then usin
 🌟 **TLDR:** For a quickstart, train a toy Llama1B GLP in a few minutes.
 ```
 # download data
-huggingface-cli download generative-latent-prior/llama1b-layer07-fineweb-1M \
+uv run huggingface-cli download generative-latent-prior/llama1b-layer07-fineweb-1M \
     --repo-type dataset  \
     --local-dir data/llama1b-layer07-fineweb-1M \
     --local-dir-use-symlinks False
 # launch training
-conda activate glp
-python3 glp_train.py config=configs/train_llama1b_static.yaml
+uv run python3 glp_train.py config=configs/train_llama1b_static.yaml
 ```
 
 Currently training is pre-set to a small static sanity dataset with 1M activations,
